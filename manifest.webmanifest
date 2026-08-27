@@ -1,0 +1,14 @@
+{
+  "name":"Научная библиотека Сурфактант-БЛ",
+  "short_name":"Сурфактант-БЛ",
+  "description":"Научная библиотека АксельФарм для медицинских работников",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#f5f7f7",
+  "theme_color":"#103a58",
+  "lang":"ru",
+  "icons":[
+    {"src":"icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"}
+  ]
+}

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#103a58">
+  <meta name="description" content="Научная библиотека по препарату Сурфактант-БЛ для медицинских работников.">
+  <title>Научная библиотека Сурфактант-БЛ — АксельФарм</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="locked">
+  <header class="site-header">
+    <a class="brand official-brand" href="#top" aria-label="АксельФарм — на главную"><img src="assets/axelpharm-logo.svg" alt="АксельФарм"></a>
+    <nav aria-label="Основная навигация">
+      <a href="#library">Библиотека</a>
+    </nav>
+    <button class="install-button" id="installButton" type="button" hidden>Установить приложение</button>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="overline">ПРОФЕССИОНАЛЬНАЯ НАУЧНАЯ БИБЛИОТЕКА</p>
+        <h1>Доказательная база<br><em>Сурфактант-БЛ</em></h1>
+        <p class="hero-lead">Публикации, клинические наблюдения, обзоры и методические материалы — в одном каталоге для ежедневной работы врача.</p>
+        <a class="primary-button" href="#library">Перейти к публикациям <span>↓</span></a>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="lung-line lung-left"></div><div class="lung-line lung-right"></div>
+        <div class="molecule m1"></div><div class="molecule m2"></div><div class="molecule m3"></div>
+        <p>КЛИНИЧЕСКИЕ<br>ДАННЫЕ</p>
+      </div>
+      <div class="hero-stats">
+        <div><strong id="publicationStat">68</strong><span>публикаций</span></div>
+        <div><strong id="yearStat">29</strong><span>лет научных данных</span></div>
+        <div><strong id="categoryStat">9</strong><span>направлений</span></div>
+      </div>
+    </section>
+
+    <section class="library" id="library">
+      <div class="section-heading">
+        <div><p class="overline">КАТАЛОГ МАТЕРИАЛОВ</p><h2>Найдите нужную публикацию</h2></div>
+        <p>Ищите по названию, автору, нозологии или ключевому сообщению. Откройте карточку, чтобы увидеть дизайн исследования, выводы и готовую цитату.</p>
+      </div>
+
+      <div class="search-panel">
+        <label class="search-box">
+          <span aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search" placeholder="Например: БЛД, COVID-19, ингаляционная терапия…" autocomplete="off">
+          <kbd>Ctrl K</kbd>
+        </label>
+        <button class="filter-toggle" id="filterToggle" type="button" aria-expanded="false">Фильтры <span id="filterBadge" hidden>0</span></button>
+        <button class="clear-button" id="clearButton" type="button">Сбросить</button>
+      </div>
+
+      <div class="filters" id="filters" hidden>
+        <label>Направление<select id="categoryFilter"><option value="">Все направления</option></select></label>
+        <label>Нозология<select id="nosologyFilter"><option value="">Все нозологии</option></select></label>
+        <label>Год<select id="yearFilter"><option value="">Все годы</option></select></label>
+        <label>Тип материала<select id="typeFilter"><option value="">Все типы</option></select></label>
+        <label>Для кого<select id="audienceFilter"><option value="">Все специалисты</option></select></label>
+      </div>
+
+      <div class="catalog-toolbar">
+        <p><strong id="resultCount">0</strong> <span id="resultLabel">материалов</span></p>
+        <label>Сортировка<select id="sortSelect"><option value="new">Сначала новые</option><option value="old">Сначала старые</option><option value="title">По названию</option></select></label>
+      </div>
+
+      <div class="category-chips" id="categoryChips" aria-label="Быстрый выбор направления"></div>
+      <div class="cards" id="cards"></div>
+      <div class="empty-state" id="emptyState" hidden><strong>Ничего не найдено</strong><p>Попробуйте изменить запрос или сбросить фильтры.</p></div>
+      <button class="show-more" id="showMore" type="button" hidden>Показать ещё</button>
+    </section>
+
+  </main>
+
+  <footer>
+    <a class="footer-brand" href="https://axelpharm.ru/" target="_blank" rel="noopener"><img src="assets/axelpharm-footer-logo.svg" alt="АксельФарм"></a>
+    <p>Информация предназначена исключительно для медицинских и фармацевтических работников.</p>
+    <a href="https://axelpharm.ru/" target="_blank" rel="noopener">axelpharm.ru ↗</a>
+  </footer>
+
+  <div class="modal-backdrop" id="detailsModal" hidden>
+    <article class="details-modal" role="dialog" aria-modal="true" aria-labelledby="detailsTitle">
+      <button class="modal-close" id="detailsClose" type="button" aria-label="Закрыть">×</button>
+      <div id="detailsContent"></div>
+    </article>
+  </div>
+
+  <div class="med-gate" id="medGate" role="dialog" aria-modal="true" aria-labelledby="gateTitle">
+    <div class="gate-card">
+      <div class="gate-logo"><img src="assets/axelpharm-logo.svg" alt="АксельФарм"></div>
+      <button class="gate-close" id="gateClose" type="button" aria-label="Закрыть сайт">×</button>
+      <p>Данный раздел сайта предназначен исключительно для медицинских и фармацевтических работников.</p>
+      <h2 id="gateTitle">Вы являетесь специалистом в сфере здравоохранения?</h2>
+      <div class="gate-actions"><button class="gate-yes" id="gateYes" type="button">Да, продолжить</button><button class="gate-no" id="gateNo" type="button">Нет</button></div>
+      <small>Нажимая «Да», вы подтверждаете свой статус медицинского или фармацевтического работника.</small>
+    </div>
+  </div>
+
+  <script src="data/publications.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
