@@ -1,7 +1,7 @@
 (function(){
   const data = Array.isArray(window.AXEL_PUBLICATIONS) ? window.AXEL_PUBLICATIONS : [];
   const $ = id => document.getElementById(id);
-  const state = {search:"",category:"",nosology:"",year:"",type:"",audience:"",sort:"new",limit:12};
+  const state = {search:"",category:"",nosology:"",year:"",author:"",message:"",sort:"new",limit:12};
   const esc = value => String(value || "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
   const normal = value => String(value || "").toLocaleLowerCase("ru-RU").replace(/ё/g,"е");
   const unique = key => [...new Set(data.map(x=>x[key]).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),"ru"));
@@ -9,6 +9,9 @@
   const shortCategory = value => value.replace(/^\s+/,"").replace(/\s*\([^)]*\)/g,"").replace("ОБЩИЕ / ОБЗОРНЫЕ / ЭКСПЕРИМЕНТАЛЬНЫЕ","Общие и обзорные").replace("ТЕРМОИНГАЛЯЦИОННАЯ ТРАВМА / ОЖОГИ","Термоингаляционная травма").replace("Прочее (тезисы, формуляры и пр.)","Прочее").replace("ОНКОЛОГИЯ/ХИРУРГИЯ","Онкология и хирургия").replace("КАРДИОЛОГИЯ/ХИРУРГИЯ","Кардиология и хирургия").replace("АКУШЕРСТВО И ГИНЕКОЛОГИЯ","Акушерство и гинекология").replace("ПУЛЬМОНОЛОГИЯ","Пульмонология").replace("НЕОНАТОЛОГИЯ","Неонатология");
   const cleanSummary = item => item.abstract || item.conclusions || "Подробная информация представлена в карточке материала.";
   const keyMessage = item => String(item.keyMessages || "").replace(/^\s*КЛЮЧЕВАЯ\s*:\s*/i, "").trim();
+  const authorValues = () => [...new Set(data.flatMap(item => String(item.authors || "").split(/[,;\n]+/).map(value => value.trim()).filter(value => value && /[A-Za-zА-Яа-яЁё]/.test(value))))].sort((a,b)=>a.localeCompare(b,"ru"));
+  const messageValues = () => [...new Set(data.map(keyMessage).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ru"));
+  const addOptions = (id, values, label = value => value) => values.forEach(value=>{const option=document.createElement("option");option.value=value;option.textContent=label(value);$(id).append(option);});
   const keyMessageHtml = item => {
     const message = keyMessage(item);
     if (!message) return "";
@@ -19,19 +22,20 @@
 
   function populateSelect(id,key){ unique(key).forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=key==="category"?shortCategory(v):v;$(id).append(o);}); }
   function init(){
-    populateSelect("categoryFilter","category");populateSelect("nosologyFilter","nosology");populateSelect("yearFilter","year");populateSelect("typeFilter","workType");populateSelect("audienceFilter","audience");
-    const years=data.map(x=>Number(x.year)).filter(Boolean);$("publicationStat").textContent=data.length;$("yearStat").textContent=years.length?Math.max(...years)-Math.min(...years)+1:0;$("categoryStat").textContent=unique("category").length;
+    populateSelect("categoryFilter","category");populateSelect("nosologyFilter","nosology");populateSelect("yearFilter","year");
+    addOptions("authorFilter",authorValues());
+    addOptions("messageFilter",messageValues(),value=>value.length>90?`${value.slice(0,87)}…`:value);
     renderChips();bind();render();setupGate();setupPwa();
   }
   function filtered(){
     const q=normal(state.search);
     const fields=["title","authors","journal","category","nosology","workType","design","abstract","conclusions","keyMessages","audience","citation"];
-    const items=data.filter(x=>(!q||fields.some(k=>normal(x[k]).includes(q)))&&(!state.category||x.category===state.category)&&(!state.nosology||x.nosology===state.nosology)&&(!state.year||String(x.year)===state.year)&&(!state.type||x.workType===state.type)&&(!state.audience||x.audience===state.audience));
+    const items=data.filter(x=>(!q||fields.some(k=>normal(x[k]).includes(q)))&&(!state.category||x.category===state.category)&&(!state.nosology||x.nosology===state.nosology)&&(!state.year||String(x.year)===state.year)&&(!state.author||normal(x.authors).includes(normal(state.author)))&&(!state.message||keyMessage(x)===state.message));
     return items.sort((a,b)=>state.sort==="title"?a.title.localeCompare(b.title,"ru"):state.sort==="old"?(Number(a.year)||0)-(Number(b.year)||0):(Number(b.year)||0)-(Number(a.year)||0));
   }
   function render(){
-    const items=filtered(),shown=items.slice(0,state.limit);$("resultCount").textContent=items.length;$("resultLabel").textContent=plural(items.length,["материал","материала","материалов"]);$("cards").innerHTML=shown.map(card).join("");$("emptyState").hidden=items.length>0;$("showMore").hidden=shown.length>=items.length;
-    const active=[state.category,state.nosology,state.year,state.type,state.audience].filter(Boolean).length;$("filterBadge").hidden=!active;$("filterBadge").textContent=active;document.querySelectorAll(".category-chips button").forEach(b=>b.classList.toggle("active",b.dataset.value===state.category));
+    const items=filtered(),shown=items.slice(0,state.limit);$("cards").innerHTML=shown.map(card).join("");$("emptyState").hidden=items.length>0;$("showMore").hidden=shown.length>=items.length;
+    const active=[state.category,state.nosology,state.year,state.author,state.message].filter(Boolean).length;$("filterBadge").hidden=!active;$("filterBadge").textContent=active;document.querySelectorAll(".category-chips button").forEach(b=>b.classList.toggle("active",b.dataset.value===state.category));
     document.querySelectorAll(".open-details").forEach(b=>b.addEventListener("click",()=>openDetails(Number(b.dataset.id))));
   }
   function card(x){const href=safeUrl(x.url);const url=href?`<a href="${esc(href)}" target="_blank" rel="noopener">Открыть источник ↗</a>`:"";return `<article class="publication-card"><div class="card-top"><span class="card-year">${esc(x.year||"Год не указан")}</span><span class="card-type">${esc(x.workType||"Научный материал")}</span></div><h3>${esc(x.title)}</h3><p class="journal">${esc(x.journal)}</p>${keyMessageHtml(x)}<p class="card-summary">${esc(cleanSummary(x))}</p><div class="card-meta">${x.nosology?`<span>${esc(x.nosology)}</span>`:""}${x.patients?`<span>${esc(x.patients)}</span>`:""}</div><div class="card-actions"><button class="open-details" data-id="${x.id}">Подробнее</button>${url}</div></article>`}
@@ -41,9 +45,9 @@
   function closeDetails(){$("detailsModal").hidden=true;document.body.classList.remove("locked");}
   function bind(){
     $("searchInput").addEventListener("input",e=>{state.search=e.target.value;state.limit=12;render();});
-    [["categoryFilter","category"],["nosologyFilter","nosology"],["yearFilter","year"],["typeFilter","type"],["audienceFilter","audience"],["sortSelect","sort"]].forEach(([id,key])=>$(id).addEventListener("change",e=>{state[key]=e.target.value;state.limit=12;render();}));
+    [["categoryFilter","category"],["nosologyFilter","nosology"],["yearFilter","year"],["authorFilter","author"],["messageFilter","message"],["sortSelect","sort"]].forEach(([id,key])=>$(id).addEventListener("change",e=>{state[key]=e.target.value;state.limit=12;render();}));
     $("filterToggle").addEventListener("click",()=>{const hidden=!$("filters").hidden;$("filters").hidden=hidden;$("filterToggle").setAttribute("aria-expanded",String(!hidden));});
-    $("clearButton").addEventListener("click",()=>{Object.assign(state,{search:"",category:"",nosology:"",year:"",type:"",audience:"",sort:"new",limit:12});["searchInput","categoryFilter","nosologyFilter","yearFilter","typeFilter","audienceFilter"].forEach(id=>$(id).value="");$("sortSelect").value="new";render();});
+    $("clearButton").addEventListener("click",()=>{Object.assign(state,{search:"",category:"",nosology:"",year:"",author:"",message:"",sort:"new",limit:12});["searchInput","categoryFilter","nosologyFilter","yearFilter","authorFilter","messageFilter"].forEach(id=>$(id).value="");$("sortSelect").value="new";render();});
     $("showMore").addEventListener("click",()=>{state.limit+=12;render();});$("detailsClose").addEventListener("click",closeDetails);$("detailsModal").addEventListener("click",e=>{if(e.target===$("detailsModal"))closeDetails();});
     document.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();$("searchInput").focus();}if(e.key==="Escape"&&!$("detailsModal").hidden)closeDetails();});
   }
