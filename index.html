@@ -7,7 +7,7 @@
   <meta name="description" content="Научная библиотека по препарату Сурфактант-БЛ для медицинских работников.">
   <title>Научная библиотека Сурфактант-БЛ — АксельФарм</title>
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body class="locked">
   <header class="site-header">
@@ -22,7 +22,7 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="overline">ПРОФЕССИОНАЛЬНАЯ НАУЧНАЯ БИБЛИОТЕКА</p>
-        <h1>Доказательная база<br><em>Сурфактант-БЛ</em></h1>
+        <h1>Библиотека данных<br><em>Сурфактант-БЛ</em></h1>
         <p class="hero-lead">Публикации, клинические наблюдения, обзоры и методические материалы — в одном каталоге для ежедневной работы врача.</p>
         <a class="primary-button" href="#library">Перейти к публикациям <span>↓</span></a>
       </div>
@@ -32,16 +32,16 @@
         <p>КЛИНИЧЕСКИЕ<br>ДАННЫЕ</p>
       </div>
       <div class="hero-stats">
-        <div><strong id="publicationStat">68</strong><span>публикаций</span></div>
         <div><strong id="yearStat">29</strong><span>лет научных данных</span></div>
-        <div><strong id="categoryStat">9</strong><span>направлений</span></div>
+        <div><strong id="categoryStat">7</strong><span>терапевтических направлений</span></div>
+        <div><strong id="publicationStat">100+</strong><span>материалов</span></div>
       </div>
     </section>
 
     <section class="library" id="library">
       <div class="section-heading">
         <div><p class="overline">КАТАЛОГ МАТЕРИАЛОВ</p><h2>Найдите нужную публикацию</h2></div>
-        <p>Ищите по названию, автору, нозологии или ключевому сообщению. Откройте карточку, чтобы увидеть дизайн исследования, выводы и готовую цитату.</p>
+        <p>Ищите по названию, автору, нозологии или ключевому сообщению. Откройте карточку, чтобы увидеть резюме, дизайн исследования и ключевые сообщения.</p>
       </div>
 
       <div class="search-panel">
@@ -58,12 +58,11 @@
         <label>Направление<select id="categoryFilter"><option value="">Все направления</option></select></label>
         <label>Нозология<select id="nosologyFilter"><option value="">Все нозологии</option></select></label>
         <label>Год<select id="yearFilter"><option value="">Все годы</option></select></label>
-        <label>Тип материала<select id="typeFilter"><option value="">Все типы</option></select></label>
-        <label>Для кого<select id="audienceFilter"><option value="">Все специалисты</option></select></label>
+        <label>Автор<select id="authorFilter"><option value="">Все авторы</option></select></label>
+        <label>Ключевое сообщение<select id="messageFilter"><option value="">Все сообщения</option></select></label>
       </div>
 
       <div class="catalog-toolbar">
-        <p><strong id="resultCount">0</strong> <span id="resultLabel">материалов</span></p>
         <label>Сортировка<select id="sortSelect"><option value="new">Сначала новые</option><option value="old">Сначала старые</option><option value="title">По названию</option></select></label>
       </div>
 
@@ -99,7 +98,7 @@
     </div>
   </div>
 
-  <script src="data/publications.js"></script>
-  <script src="app.js"></script>
+  <script src="data/publications.js?v=3"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
