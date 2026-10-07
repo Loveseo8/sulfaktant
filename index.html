@@ -47,7 +47,8 @@
       <div class="search-panel">
         <label class="search-box">
           <span aria-hidden="true">⌕</span>
-          <input id="searchInput" type="search" placeholder="Например: БЛД, COVID-19, ингаляционная терапия…" autocomplete="off">
+          <input id="searchInput" type="search" list="searchSuggestions" placeholder="Например: БЛД, COVID-19, ингаляционная терапия…" autocomplete="off">
+          <datalist id="searchSuggestions"></datalist>
           <kbd>Ctrl K</kbd>
         </label>
         <button class="filter-toggle" id="filterToggle" type="button" aria-expanded="false">Фильтры <span id="filterBadge" hidden>0</span></button>
@@ -98,7 +99,7 @@
     </div>
   </div>
 
-  <script src="data/publications.js?v=6"></script>
-  <script src="app.js?v=6"></script>
+  <script src="data/publications.js?v=7"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>
