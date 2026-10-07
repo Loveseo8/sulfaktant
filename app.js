@@ -18,6 +18,10 @@
   const itemAuthors = item => String(item.authors || "").split(/[,;\n]+/).map(normalizeAuthor).filter(value => value && /[A-Za-zА-Яа-яЁё]/.test(value));
   const authorValues = () => [...new Set(data.flatMap(itemAuthors))].sort((a,b)=>a.localeCompare(b,"ru"));
   const messageValues = () => [...new Set(data.map(keyMessage).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"ru"));
+  const searchSuggestionValues = () => [...new Set(data.flatMap(item=>[
+    item.nosology,
+    ...String(keyMessage(item) || "").split(/[,;]+/)
+  ]).map(value=>String(value || "").trim()).filter(value=>value.length>=2))].sort((a,b)=>a.localeCompare(b,"ru"));
   const addOptions = (id, values, label = value => value) => values.forEach(value=>{const option=document.createElement("option");option.value=value;option.textContent=label(value);$(id).append(option);});
   const keyMessageHtml = item => {
     const message = keyMessage(item);
@@ -32,6 +36,7 @@
     populateSelect("categoryFilter","category");populateSelect("nosologyFilter","nosology");populateSelect("yearFilter","year");
     addOptions("authorFilter",authorValues());
     addOptions("messageFilter",messageValues(),value=>value.length>90?`${value.slice(0,87)}…`:value);
+    addOptions("searchSuggestions",searchSuggestionValues());
     renderChips();bind();render();setupGate();setupPwa();
   }
   function filtered(){
